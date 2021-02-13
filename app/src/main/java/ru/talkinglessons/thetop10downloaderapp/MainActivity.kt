@@ -21,7 +21,7 @@ const val TAG = "TheTop10"
 
 class MainActivity : AppCompatActivity() {
 
-    private val uiScope = CoroutineScope(Dispatchers.Main)
+//    private val uiScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate: called")
         ioScope.launch {
-            downloadData("url")
+            downloadData("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
         }
         Log.d(TAG, "onCreate: done")
     }
@@ -52,9 +52,23 @@ class MainActivity : AppCompatActivity() {
             val response = connection.responseCode
             Log.d(TAG, "downloadXML: The response code was $response")
 
-            val inputStream = connection.inputStream
-            val inputStreamReader = InputStreamReader(inputStream)
-            val reader = BufferedReader(inputStreamReader)
+//            val inputStream = connection.inputStream
+//            val inputStreamReader = InputStreamReader(inputStream)
+//            val reader = BufferedReader(inputStreamReader)
+            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+            val inputBuffer = CharArray(500)
+            var charsRead = 0
+            while (charsRead >= 0) {
+                charsRead = reader.read(inputBuffer)
+                if (charsRead >= 0) {
+                    xmlResult.append(String(inputBuffer, 0, charsRead))
+                }
+            }
+            reader.close()
+
+            Log.d(TAG, "Received ${xmlResult.length} bytes")
+
+            return xmlResult.toString()
         } catch (e: MalformedURLException) {
             Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
         } catch(e: IOException) {
@@ -62,6 +76,6 @@ class MainActivity : AppCompatActivity() {
         } catch(e: Exception) {
             Log.e(TAG, "downloadXML: Unknown error")
         }
-        return "done"
+        return ""
     }
 }
