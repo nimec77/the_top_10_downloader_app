@@ -21,7 +21,7 @@ const val TAG = "TheTop10"
 
 class MainActivity : AppCompatActivity() {
 
-//    private val uiScope = CoroutineScope(Dispatchers.Main)
+    //    private val uiScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +29,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate: called")
         ioScope.launch {
-            downloadData("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+            val downloadedData =
+                downloadData("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+//            Log.d(TAG, downloadedData)
         }
         Log.d(TAG, "onCreate: done")
     }
@@ -71,9 +73,11 @@ class MainActivity : AppCompatActivity() {
             return xmlResult.toString()
         } catch (e: MalformedURLException) {
             Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
-        } catch(e: Exception) {
+        } catch (e: SecurityException) {
+            Log.e(TAG, "downloadXML: Security exception. Needs permissions? ${e.message}")
+        } catch (e: Exception) {
             Log.e(TAG, "downloadXML: Unknown error")
         }
         return ""
