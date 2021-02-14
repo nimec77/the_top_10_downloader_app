@@ -25,10 +25,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate: called")
         ioScope.launch {
-            val downloadedData =
+            val result =
                 "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
                     .downloadData()
-            Log.d(TAG, downloadedData)
+            val parseApplications = ParseApplications()
+            parseApplications.parse(result)
         }
         Log.d(TAG, "onCreate: done")
     }
