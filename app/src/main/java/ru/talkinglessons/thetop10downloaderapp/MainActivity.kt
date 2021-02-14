@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         ioScope.launch {
             val downloadedData =
                 downloadData("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
-//            Log.d(TAG, downloadedData)
+            Log.d(TAG, downloadedData)
         }
         Log.d(TAG, "onCreate: done")
     }
@@ -54,31 +54,21 @@ class MainActivity : AppCompatActivity() {
             val response = connection.responseCode
             Log.d(TAG, "downloadXML: The response code was $response")
 
-//            val inputStream = connection.inputStream
-//            val inputStreamReader = InputStreamReader(inputStream)
-//            val reader = BufferedReader(inputStreamReader)
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
-            val inputBuffer = CharArray(500)
-            var charsRead = 0
-            while (charsRead >= 0) {
-                charsRead = reader.read(inputBuffer)
-                if (charsRead >= 0) {
-                    xmlResult.append(String(inputBuffer, 0, charsRead))
-                }
-            }
-            reader.close()
-
+            connection.inputStream.buffered().reader().use { xmlResult.append(it.readText()) }
             Log.d(TAG, "Received ${xmlResult.length} bytes")
 
             return xmlResult.toString()
-        } catch (e: MalformedURLException) {
-            Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
-        } catch (e: IOException) {
-            Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
-        } catch (e: SecurityException) {
-            Log.e(TAG, "downloadXML: Security exception. Needs permissions? ${e.message}")
         } catch (e: Exception) {
-            Log.e(TAG, "downloadXML: Unknown error")
+            val errorMessage: String = when (e) {
+                is MalformedURLException -> "downloadXML: Invalid URL ${e.message}"
+                is IOException -> "downloadXML: IO Exception reading data: ${e.message}"
+                is SecurityException -> {
+                    e.printStackTrace()
+                    "downloadXML: Security Exception. Needs permission? ${e.message}"
+                }
+                else -> "downloadXML: Unknown error: ${e.message}"
+            }
+            Log.e(TAG, errorMessage)
         }
         return ""
     }
