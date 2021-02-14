@@ -6,15 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
-import java.net.URI
 import java.net.URL
 
 const val TAG = "TheTop10"
@@ -30,15 +26,16 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: called")
         ioScope.launch {
             val downloadedData =
-                downloadData("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+                    .downloadData()
             Log.d(TAG, downloadedData)
         }
         Log.d(TAG, "onCreate: done")
     }
 
-    private fun downloadData(url: String): String {
-        Log.d(TAG, "downloadData: start with $url")
-        val rssFeed = downloadXML(url)
+    private fun String.downloadData(): String {
+        Log.d(TAG, "downloadData: start with $this")
+        val rssFeed = downloadXML(this)
         if (rssFeed.isEmpty()) {
             Log.e(TAG, "downloadData: Error downloading")
         }
