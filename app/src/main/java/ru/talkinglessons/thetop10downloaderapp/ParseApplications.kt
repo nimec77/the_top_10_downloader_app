@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 class ParseApplications {
     private val tag = "ParseApplications"
 
-    private val applications = ArrayList<FeedEntry>()
+    val applications = ArrayList<FeedEntry>()
 
     fun parse(xmlData: String): Boolean {
 //        Log.d(tag, "parse called with $xmlData")

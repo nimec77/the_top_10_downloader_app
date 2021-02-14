@@ -1,17 +1,20 @@
 package ru.talkinglessons.thetop10downloaderapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import ru.talkinglessons.thetop10downloaderapp.entity.FeedEntry
 import java.io.IOException
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 
 const val TAG = "TheTop10"
 
@@ -25,22 +28,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate: called")
         ioScope.launch {
-            val result =
-                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
-                    .downloadData()
-            val parseApplications = ParseApplications()
-            parseApplications.parse(result)
+            downloadData(
+                this@MainActivity.baseContext,
+                xmlListView,
+                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml",
+            )
+
         }
         Log.d(TAG, "onCreate: done")
     }
 
-    private fun String.downloadData(): String {
-        Log.d(TAG, "downloadData: start with $this")
-        val rssFeed = downloadXML(this)
+    private suspend fun downloadData(context: Context, listView: ListView, url: String) {
+        Log.d(TAG, "downloadData: start with $url")
+        val rssFeed = downloadXML(url)
         if (rssFeed.isEmpty()) {
             Log.e(TAG, "downloadData: Error downloading")
         }
-        return rssFeed
+        val parseApplications = ParseApplications()
+        withContext(Dispatchers.Default) {
+            parseApplications.parse(rssFeed)
+        }
+
+        withContext(Dispatchers.Main) {
+            val arrayAdapter =
+                ArrayAdapter(context, R.layout.list_item, parseApplications.applications)
+            listView.adapter = arrayAdapter
+        }
     }
 
     private fun downloadXML(urlPath: String): String {
