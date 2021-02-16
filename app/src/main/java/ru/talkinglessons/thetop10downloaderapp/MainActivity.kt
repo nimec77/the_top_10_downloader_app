@@ -20,7 +20,6 @@ const val TAG = "TheTop10"
 
 class MainActivity : AppCompatActivity() {
 
-    //    private val uiScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +44,7 @@ class MainActivity : AppCompatActivity() {
             Log.e(TAG, "downloadData: Error downloading")
         }
         val parseApplications = ParseApplications()
-        withContext(Dispatchers.Default) {
-            parseApplications.parse(rssFeed)
-        }
+        parseApplications.parse(rssFeed)
 
         withContext(Dispatchers.Main) {
             val arrayAdapter =
