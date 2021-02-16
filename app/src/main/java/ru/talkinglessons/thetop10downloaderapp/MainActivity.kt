@@ -48,9 +48,6 @@ class MainActivity : AppCompatActivity() {
         parseApplications.parse(rssFeed)
 
         withContext(Dispatchers.Main) {
-//            val arrayAdapter =
-//                ArrayAdapter(context, R.layout.list_item, parseApplications.applications)
-//            listView.adapter = arrayAdapter
             val feedAdapter = FeedAdapter(context, R.layout.list_record, parseApplications.applications)
             listView.adapter = feedAdapter
         }
