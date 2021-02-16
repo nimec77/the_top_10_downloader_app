@@ -15,6 +15,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import ru.talkinglessons.thetop10downloaderapp.adapter.FeedAdapter
 
 const val TAG = "TheTop10"
 
@@ -47,9 +48,11 @@ class MainActivity : AppCompatActivity() {
         parseApplications.parse(rssFeed)
 
         withContext(Dispatchers.Main) {
-            val arrayAdapter =
-                ArrayAdapter(context, R.layout.list_item, parseApplications.applications)
-            listView.adapter = arrayAdapter
+//            val arrayAdapter =
+//                ArrayAdapter(context, R.layout.list_item, parseApplications.applications)
+//            listView.adapter = arrayAdapter
+            val feedAdapter = FeedAdapter(context, R.layout.list_record, parseApplications.applications)
+            listView.adapter = feedAdapter
         }
     }
 
