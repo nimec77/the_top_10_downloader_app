@@ -3,19 +3,15 @@ package ru.talkinglessons.thetop10downloaderapp
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import ru.talkinglessons.thetop10downloaderapp.entity.FeedEntry
-import java.io.IOException
-import java.lang.Exception
-import java.lang.StringBuilder
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import ru.talkinglessons.thetop10downloaderapp.adapter.FeedAdapter
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 
 const val TAG = "TheTop10"
 

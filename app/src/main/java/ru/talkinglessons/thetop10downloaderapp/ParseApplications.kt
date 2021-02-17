@@ -31,7 +31,7 @@ class ParseApplications {
                 val tagName = xpp.name?.toLowerCase(Locale.ROOT)
                 when (eventType) {
                     XmlPullParser.START_TAG -> {
-                        Log.d(tag, "parse: Starting tag for $tagName")
+//                        Log.d(tag, "parse: Starting tag for $tagName")
                         if (tagName == "entry") {
                             inEntry = true
                         } else if ((tagName == "image") && inEntry) {
@@ -64,10 +64,10 @@ class ParseApplications {
                 }
                 eventType = xpp.next()
             }
-            for (app in applications) {
-                Log.d(tag, "********************")
-                Log.d(tag, app.toString())
-            }
+//            for (app in applications) {
+//                Log.d(tag, "********************")
+//                Log.d(tag, app.toString())
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
             status = false
