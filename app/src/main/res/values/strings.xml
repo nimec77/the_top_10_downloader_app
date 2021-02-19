@@ -6,4 +6,5 @@
     <string name="songs">Songs</string>
     <string name="top_10">Top 10</string>
     <string name="top_25">Top 25</string>
+    <string name="refresh">Refresh</string>
 </resources>
