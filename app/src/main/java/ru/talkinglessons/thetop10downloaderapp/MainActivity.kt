@@ -3,6 +3,8 @@ package ru.talkinglessons.thetop10downloaderapp
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,15 +25,42 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate: called")
+        downloadUrl("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+        Log.d(TAG, "onCreate: done")
+    }
+
+    private fun downloadUrl(feedUrl: String) {
         ioScope.launch {
             downloadData(
                 this@MainActivity.baseContext,
                 xmlListView,
-                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml",
+                feedUrl,
             )
 
         }
-        Log.d(TAG, "onCreate: done")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.feeds_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val feedUrl: String = when (item.itemId) {
+            R.id.mnuFree ->
+                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+
+            R.id.mnuPaid ->
+                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+
+            R.id.mnuSongs ->
+                "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+
+            else -> return super.onOptionsItemSelected(item)
+        }
+        downloadUrl(feedUrl)
+        return true
     }
 
     private suspend fun downloadData(context: Context, listView: ListView, url: String) {
@@ -44,7 +73,8 @@ class MainActivity : AppCompatActivity() {
         parseApplications.parse(rssFeed)
 
         withContext(Dispatchers.Main) {
-            val feedAdapter = FeedAdapter(context, R.layout.list_record, parseApplications.applications)
+            val feedAdapter =
+                FeedAdapter(context, R.layout.list_record, parseApplications.applications)
             listView.adapter = feedAdapter
         }
     }
